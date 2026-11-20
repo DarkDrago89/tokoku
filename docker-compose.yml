@@ -1,0 +1,13 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: tokoku
+      POSTGRES_PASSWORD: tokoku
+      POSTGRES_DB: tokoku
+    ports:
+      - "5433:5432"
+    volumes:
+      - tokoku-data:/var/lib/postgresql/data
+volumes:
+  tokoku-data:

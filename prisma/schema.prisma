@@ -1,0 +1,220 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  owner
+  admin
+  staff
+}
+
+enum OrderStatus {
+  pending
+  paid
+  packed
+  shipped
+  done
+  cancelled
+}
+
+enum InteractionType {
+  whatsapp
+  call
+  meeting
+  complaint
+  note
+}
+
+model Store {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String
+  phone     String?
+  address   String?
+  settings  Json     @default("{}")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  users     User[]
+  customers Customer[]
+  tags      Tag[]
+  products  Product[]
+  orders    Order[]
+  tasks     Task[]
+  templates MessageTemplate[]
+
+  @@map("stores")
+}
+
+model User {
+  id           String   @id @default(uuid()) @db.Uuid
+  storeId      String   @map("store_id") @db.Uuid
+  name         String
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  role         Role     @default(staff)
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  store        Store         @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  interactions Interaction[]
+  tasks        Task[]
+
+  @@map("users")
+}
+
+model Customer {
+  id          String    @id @default(uuid()) @db.Uuid
+  storeId     String    @map("store_id") @db.Uuid
+  name        String
+  phone       String
+  email       String?
+  address     String?
+  city        String?
+  birthday    DateTime? @db.Date
+  source      String?
+  notes       String?
+  totalSpent  Decimal   @default(0) @map("total_spent") @db.Decimal(14, 2)
+  orderCount  Int       @default(0) @map("order_count")
+  lastOrderAt DateTime? @map("last_order_at")
+  deletedAt   DateTime? @map("deleted_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  store        Store         @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  tags         CustomerTag[]
+  orders       Order[]
+  interactions Interaction[]
+  tasks        Task[]
+
+  @@unique([storeId, phone])
+  @@index([storeId, lastOrderAt])
+  @@map("customers")
+}
+
+model Tag {
+  id        String        @id @default(uuid()) @db.Uuid
+  storeId   String        @map("store_id") @db.Uuid
+  name      String
+  color     String        @default("zinc")
+  store     Store         @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  customers CustomerTag[]
+
+  @@unique([storeId, name])
+  @@map("tags")
+}
+
+model CustomerTag {
+  customerId String   @map("customer_id") @db.Uuid
+  tagId      String   @map("tag_id") @db.Uuid
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  tag        Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([customerId, tagId])
+  @@map("customer_tags")
+}
+
+model Product {
+  id             String   @id @default(uuid()) @db.Uuid
+  storeId        String   @map("store_id") @db.Uuid
+  name           String
+  sku            String?
+  price          Decimal  @db.Decimal(14, 2)
+  category       String?
+  stock          Int?
+  repurchaseDays Int?     @map("repurchase_days")
+  isActive       Boolean  @default(true) @map("is_active")
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  store Store       @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  items OrderItem[]
+
+  @@map("products")
+}
+
+model Order {
+  id             String      @id @default(uuid()) @db.Uuid
+  storeId        String      @map("store_id") @db.Uuid
+  customerId     String      @map("customer_id") @db.Uuid
+  orderNumber    String      @map("order_number")
+  status         OrderStatus @default(pending)
+  subtotal       Decimal     @db.Decimal(14, 2)
+  discount       Decimal     @default(0) @db.Decimal(14, 2)
+  shippingCost   Decimal     @default(0) @map("shipping_cost") @db.Decimal(14, 2)
+  total          Decimal     @db.Decimal(14, 2)
+  paymentMethod  String?     @map("payment_method")
+  trackingNumber String?     @map("tracking_number")
+  orderDate      DateTime    @default(now()) @map("order_date")
+  notes          String?
+
+  store    Store       @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  customer Customer    @relation(fields: [customerId], references: [id])
+  items    OrderItem[]
+
+  @@unique([storeId, orderNumber])
+  @@index([storeId, orderDate])
+  @@index([customerId])
+  @@map("orders")
+}
+
+model OrderItem {
+  id        String   @id @default(uuid()) @db.Uuid
+  orderId   String   @map("order_id") @db.Uuid
+  productId String?  @map("product_id") @db.Uuid
+  itemName  String   @map("item_name")
+  qty       Int
+  unitPrice Decimal  @map("unit_price") @db.Decimal(14, 2)
+
+  order   Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+
+  @@map("order_items")
+}
+
+model Interaction {
+  id         String          @id @default(uuid()) @db.Uuid
+  customerId String          @map("customer_id") @db.Uuid
+  userId     String?         @map("user_id") @db.Uuid
+  type       InteractionType
+  content    String
+  createdAt  DateTime        @default(now()) @map("created_at")
+
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  user     User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([customerId, createdAt])
+  @@map("interactions")
+}
+
+model Task {
+  id            String   @id @default(uuid()) @db.Uuid
+  storeId       String   @map("store_id") @db.Uuid
+  customerId    String?  @map("customer_id") @db.Uuid
+  assignedTo    String?  @map("assigned_to") @db.Uuid
+  title         String
+  notes         String?
+  dueDate       DateTime @map("due_date") @db.Date
+  isDone        Boolean  @default(false) @map("is_done")
+  autoGenerated Boolean  @default(false) @map("auto_generated")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  store    Store     @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  customer Customer? @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  assignee User?     @relation(fields: [assignedTo], references: [id], onDelete: SetNull)
+
+  @@index([storeId, dueDate, isDone])
+  @@map("tasks")
+}
+
+model MessageTemplate {
+  id       String @id @default(uuid()) @db.Uuid
+  storeId  String @map("store_id") @db.Uuid
+  title    String
+  category String
+  body     String
+
+  store Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
+
+  @@map("message_templates")
+}
