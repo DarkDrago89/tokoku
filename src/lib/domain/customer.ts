@@ -27,6 +27,10 @@ export function customerStatus(
   now: Date,
   inactiveDays: number = DEFAULT_INACTIVE_DAYS,
 ): CustomerStatus {
-  // TODO(human): tentukan status pelanggan sesuai aturan di atas.
-  throw new Error("belum diimplementasikan");
+  const daysSince = (d: Date) => (+now - +d) / 86_400_000;
+  const neverBought = c.orderCount === 0 || !c.lastOrderAt;
+  if (neverBought && daysSince(c.createdAt) <= NEW_CUSTOMER_DAYS) return "baru";
+  // Belum pernah beli: hitung sejak pelanggan dicatat.
+  const reference = neverBought ? c.createdAt : c.lastOrderAt!;
+  return daysSince(reference) > inactiveDays ? "tidak_aktif" : "aktif";
 }
