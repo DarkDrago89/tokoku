@@ -12,6 +12,12 @@ export function normalizePhone(raw: string): string | null {
   return digits;
 }
 
+/** 6281234567890 → "0812-3456-7890" agar mudah dibaca. */
+export function formatPhone(phone: string): string {
+  const local = phone.startsWith("62") ? "0" + phone.slice(2) : phone;
+  return local.replace(/^(\d{4})(\d{4})(\d+)$/, "$1-$2-$3");
+}
+
 /** Tautan wa.me yang membuka chat (opsional dengan teks terisi). */
 export function waLink(phone: string, text?: string): string {
   const base = `https://wa.me/${phone}`;
