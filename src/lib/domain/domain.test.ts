@@ -114,3 +114,9 @@ describe("format", () => {
     expect(formatDate(new Date("2026-11-21T20:00:00Z"))).toBe("22/11/2026");
   });
 });
+
+describe("perbaikan review", () => {
+  it("+62 0812… dianggap nomor yang sama dengan 0812…", () => {
+    expect(normalizePhone("+62 0812 3456 7890")).toBe("6281234567890");
+  });
+});

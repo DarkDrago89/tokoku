@@ -72,3 +72,13 @@ describe("layanan pelanggan", () => {
     expect((await listCustomers(a.storeId, { tagId }, 60)).total).toBe(1);
   });
 });
+
+describe("pencarian nomor sebagian", () => {
+  it("mengetik awalan 0812 menemukan nomor yang disimpan sebagai 62812", async () => {
+    const a = await makeStore();
+    const phone = randomPhone(); // 0812xxxxxxxx
+    await createCustomerForStore(a.storeId, { name: "Ani", phone });
+    const partial = phone.slice(0, 8); // contoh "08123456"
+    expect((await listCustomers(a.storeId, { q: partial }, 60)).total).toBe(1);
+  });
+});

@@ -144,7 +144,8 @@ export async function listCustomers(storeId: string, f: CustomerFilters, inactiv
   const q = f.q?.trim();
   if (q) {
     const digits = q.replace(/\D/g, "");
-    const phoneQ = digits.length >= 4 ? (normalizePhone(digits) ?? digits).replace(/^62/, "") : null;
+    // Cocokkan bagian lokal nomor: "0812…", "62812…", dan "812…" sama-sama dicari sebagai "812…".
+    const phoneQ = digits.length >= 4 ? digits.replace(/^(62|0)/, "") : null;
     and.push({
       OR: [
         { name: { contains: q, mode: "insensitive" } },

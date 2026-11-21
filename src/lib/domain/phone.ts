@@ -8,6 +8,8 @@ export function normalizePhone(raw: string): string | null {
   if (!digits) return null;
   if (digits.startsWith("0")) digits = "62" + digits.slice(1);
   else if (!digits.startsWith("62")) digits = "62" + digits;
+  // "+62 0812…" → buang 0 setelah kode negara
+  if (digits.startsWith("620")) digits = "62" + digits.slice(3);
   if (digits.length < 10 || digits.length > 15) return null;
   return digits;
 }

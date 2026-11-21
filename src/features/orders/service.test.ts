@@ -75,3 +75,14 @@ describe("layanan pesanan", () => {
     await expect(createOrderForStore(b.storeId, { customerId: a.customerId, items: [item] })).rejects.toThrow();
   });
 });
+
+describe("penomoran setelah INV-9999", () => {
+  it("lanjut ke INV-10000 lalu INV-10001", async () => {
+    const s = await setup();
+    const o = await createOrderForStore(s.storeId, { customerId: s.customerId, items: [item] });
+    await prisma.order.update({ where: { id: o.id }, data: { orderNumber: "INV-9999" } });
+    const a = await createOrderForStore(s.storeId, { customerId: s.customerId, items: [item] });
+    const b = await createOrderForStore(s.storeId, { customerId: s.customerId, items: [item] });
+    expect([a.orderNumber, b.orderNumber]).toEqual(["INV-10000", "INV-10001"]);
+  });
+});

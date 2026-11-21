@@ -1,4 +1,5 @@
 import { auth } from "@/auth";
+import { loadActiveUser } from "@/lib/session-user";
 import { prisma } from "@/lib/db";
 import { can } from "@/lib/permissions";
 import { toCsv } from "@/features/csv/analyze";
@@ -24,9 +25,10 @@ export async function GET(_req: Request, { params }: { params: Promise<{ jenis: 
   }
 
   const session = await auth();
-  if (!session?.user?.storeId) return new Response("Silakan masuk dulu.", { status: 401 });
-  if (!can(session.user.role, "data.export")) return new Response("Anda tidak punya akses ekspor.", { status: 403 });
-  const storeId = session.user.storeId;
+  const user = session?.user?.id ? await loadActiveUser(session.user.id) : null;
+  if (!user) return new Response("Silakan masuk dulu.", { status: 401 });
+  if (!can(user.role, "data.export")) return new Response("Anda tidak punya akses ekspor.", { status: 403 });
+  const storeId = user.storeId;
   const stamp = new Date().toISOString().slice(0, 10);
 
   if (jenis === "pelanggan") {
@@ -39,7 +41,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ jenis: 
     const csv = toCsv(
       rows.map((c) => ({
         Nama: c.name,
-        "Nomor WhatsApp": c.phone,
+        "Nomor WhatsApp": `+${c.phone}`,
         Email: c.email,
         Kota: c.city,
         Alamat: c.address,
@@ -69,7 +71,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ jenis: 
         Nomor: o.orderNumber,
         Tanggal: formatDate(o.orderDate),
         Pelanggan: o.customer.name,
-        "Nomor WhatsApp": o.customer.phone,
+        "Nomor WhatsApp": `+${o.customer.phone}`,
         Barang: o.items.map((i) => `${i.itemName} x${i.qty}`).join("; "),
         Subtotal: num(o.subtotal),
         Diskon: num(o.discount),

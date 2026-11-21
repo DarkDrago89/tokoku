@@ -71,7 +71,7 @@ export function StatusStepper({ orderId, status, trackingNumber }: { orderId: st
               {NEXT_LABEL[status]}
             </Button>
           )}
-          {status !== "done" && (
+          {(
             <Button variant="secondary" size="md" className="h-12" disabled={pending} onClick={() => setCancelOpen(true)}>
               <X className="h-4 w-4" /> Batal
             </Button>
@@ -103,7 +103,11 @@ export function StatusStepper({ orderId, status, trackingNumber }: { orderId: st
       </Sheet>
 
       <Sheet open={cancelOpen} onClose={() => setCancelOpen(false)} title="Batalkan pesanan?">
-        <p className="text-sm text-zinc-600">Pesanan yang dibatalkan tidak dihitung dalam total belanja pelanggan maupun omzet.</p>
+        <p className="text-sm text-zinc-600">
+          {status === "done"
+            ? "Pesanan ini sudah selesai. Jika dibatalkan (misalnya retur), total belanja pelanggan dan omzet akan berkurang."
+            : "Pesanan yang dibatalkan tidak dihitung dalam total belanja pelanggan maupun omzet."}
+        </p>
         <div className="mt-5 flex gap-2">
           <Button variant="secondary" className="flex-1" onClick={() => setCancelOpen(false)}>
             Tidak

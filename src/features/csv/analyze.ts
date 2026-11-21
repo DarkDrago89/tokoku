@@ -118,5 +118,15 @@ export function analyzeImport(rows: Record<string, string>[], mapping: Mapping, 
 
 /** Ubah baris menjadi CSV (dengan BOM agar Excel membaca UTF-8 dengan benar). */
 export function toCsv(rows: Record<string, string | number | null | undefined>[], headers: string[]): string {
-  return "﻿" + Papa.unparse({ fields: headers, data: rows.map((r) => headers.map((h) => r[h] ?? "")) });
+  return "﻿" + Papa.unparse({ fields: headers, data: rows.map((r) => headers.map((h) => safeCell(r[h]))) });
+}
+
+/**
+ * Cegah CSV injection: teks yang diawali = + - @ dijalankan Excel sebagai rumus, jadi diberi awalan '.
+ * Ini juga membuat nomor "+62…" tetap dibaca sebagai teks, bukan angka ilmiah.
+ */
+function safeCell(v: string | number | null | undefined): string | number {
+  if (v == null) return "";
+  if (typeof v === "number") return v;
+  return /^[=+\-@\t\r]/.test(v) ? `'${v}` : v;
 }

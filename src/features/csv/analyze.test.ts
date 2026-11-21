@@ -53,3 +53,13 @@ describe("impor CSV", () => {
     expect(res.valid).toHaveLength(0);
   });
 });
+
+import { toCsv } from "./analyze";
+describe("ekspor CSV aman", () => {
+  it("menetralkan formula (CSV injection) dan menjaga nomor sebagai teks", () => {
+    const csv = toCsv([{ Nama: "=HYPERLINK(1)", HP: "+6281234567890", Catatan: "@x" }], ["Nama", "HP", "Catatan"]);
+    expect(csv).toContain("'=HYPERLINK(1)");
+    expect(csv).toContain("'@x");
+    expect(csv).toContain("'+6281234567890");
+  });
+});

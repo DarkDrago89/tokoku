@@ -12,7 +12,7 @@ Catat pelanggan, kelola pesanan, dan follow-up lewat WhatsApp, cukup dari HP.
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql&logoColor=white)
 ![Prisma](https://img.shields.io/badge/Prisma-6-2D3748?logo=prisma)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind-4-06B6D4?logo=tailwindcss&logoColor=white)
-![Tests](https://img.shields.io/badge/tests-41%20passing-brightgreen)
+![Tests](https://img.shields.io/badge/tests-46%20passing-brightgreen)
 
 </div>
 
@@ -240,7 +240,7 @@ Semua aturan ada di `src/lib/domain/` dan dilindungi tes unit.
 npm test
 ```
 
-**41 tes** (Vitest) dalam dua lapis:
+**46 tes** (Vitest) dalam dua lapis:
 
 - **Unit:** normalisasi nomor, total pesanan, statistik & status pelanggan, render template, format Rupiah/tanggal, hak akses peran, analisis impor CSV.
 - **Integrasi** (ke database PostgreSQL tes yang terpisah):
@@ -257,7 +257,8 @@ Setiap tes membuat toko sendiri, sehingga tes bisa diulang tanpa mengosongkan da
 
 ## Keamanan & privasi
 
-- Kata sandi di-hash dengan **bcrypt**. Sesi JWT ditandatangani `AUTH_SECRET`.
+- Kata sandi di-hash dengan **bcrypt**. Sesi JWT ditandatangani `AUTH_SECRET`; peran dibaca ulang dari database di setiap request, sehingga anggota yang dihapus/diturunkan perannya langsung kehilangan akses.
+- Ekspor CSV aman dari *CSV injection* (sel diawali `=`, `+`, `-`, `@` dinetralkan).
 - **Isolasi tenant.** Setiap query menyertakan `storeId` dari sesi, tidak pernah dari input pengguna. Diuji di `service.test.ts`.
 - **Hak akses dicek di server** (`assertCan`) untuk hapus pelanggan, laporan, ekspor, dan pengaturan.
 - Validasi semua input dengan **Zod**. React meng-escape output (perlindungan XSS). Server Actions Next.js sudah membawa perlindungan CSRF.
