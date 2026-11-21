@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState, useMemo, useState } from "react";
 import { Minus, Plus, Trash2 } from "lucide-react";
 import { CustomerPicker, type PickedCustomer } from "@/features/customers/CustomerPicker";
@@ -83,9 +84,9 @@ export function OrderForm({ products, initialCustomer }: { products: ProductOpti
       {!customer && (
         <p className="-mt-4 text-sm text-zinc-500">
           Pelanggan belum ada?{" "}
-          <a href="/pelanggan/baru" className="font-medium text-zinc-900 underline underline-offset-2">
+          <Link href="/pelanggan/baru" className="font-medium text-zinc-900 underline underline-offset-2">
             Tambah pelanggan baru
-          </a>
+          </Link>
         </p>
       )}
 
