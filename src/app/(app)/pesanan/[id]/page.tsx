@@ -16,6 +16,8 @@ import { formatDate, formatRupiah } from "@/lib/domain/format";
 import { formatPhone } from "@/lib/domain/phone";
 import { num } from "@/lib/utils";
 
+export const metadata = { title: "Detail pesanan" };
+
 export default async function OrderDetailPage({
   params,
   searchParams,

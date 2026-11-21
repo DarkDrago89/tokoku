@@ -10,10 +10,10 @@ import { cn } from "@/lib/utils";
 import { updateStatusAction } from "./actions";
 
 const NEXT_LABEL: Partial<Record<OrderStatus, string>> = {
-  pending: "Tandai sudah dibayar",
-  paid: "Tandai sedang dikemas",
-  packed: "Tandai sudah dikirim",
-  shipped: "Tandai selesai",
+  pending: "Sudah dibayar",
+  paid: "Mulai dikemas",
+  packed: "Kirim + resi",
+  shipped: "Pesanan selesai",
 };
 
 /** Langkah status pesanan dengan satu tombol aksi utama (prinsip desain 8.1). */

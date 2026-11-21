@@ -22,6 +22,13 @@ import { formatPhone } from "@/lib/domain/phone";
 import { formatDate, formatRupiah, relativeDays } from "@/lib/domain/format";
 import { jakartaToday, num } from "@/lib/utils";
 
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const s = await requireSession();
+  const c = await getCustomerForStore(s.storeId, id);
+  return { title: c?.name ?? "Pelanggan" };
+}
+
 export default async function CustomerDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const s = await requireSession();
@@ -138,7 +145,7 @@ export default async function CustomerDetailPage({ params }: { params: Promise<{
 function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div className="px-2 py-3">
-      <p className="tabular truncate font-semibold">{value}</p>
+      <p className="tabular text-sm font-semibold break-words sm:text-base">{value}</p>
       <p className="text-xs text-zinc-500">{label}</p>
     </div>
   );

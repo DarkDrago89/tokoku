@@ -9,6 +9,7 @@ export const metadata: Metadata = {
   title: { default: "TokoKu CRM", template: "%s · TokoKu" },
   description: "CRM sederhana untuk UMKM dan toko online: pelanggan, pesanan, dan follow-up WhatsApp.",
   manifest: "/manifest.webmanifest",
+  icons: { icon: "/icons/icon.svg", apple: "/icons/apple-touch-icon.png" },
   appleWebApp: { capable: true, title: "TokoKu", statusBarStyle: "default" },
 };
 

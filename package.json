@@ -1,6 +1,6 @@
 {
   "name": "tokoku-crm",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -10,8 +10,9 @@
     "test": "vitest run",
     "db:migrate": "prisma migrate dev",
     "db:seed": "prisma db seed",
-    "db:test:prepare": "dotenv -e .env -- sh -c \"DATABASE_URL=$TEST_DATABASE_URL prisma migrate deploy\"",
-    "postinstall": "prisma generate"
+    "db:test:prepare": "node scripts/prepare-test-db.mjs",
+    "postinstall": "prisma generate",
+    "icons": "node scripts/make-icons.mjs"
   },
   "dependencies": {
     "@prisma/client": "^6.19.3",
@@ -43,5 +44,6 @@
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
-  }
+  },
+  "description": "CRM sederhana untuk UMKM dan toko online Indonesia"
 }

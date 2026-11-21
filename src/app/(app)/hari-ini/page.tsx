@@ -97,7 +97,7 @@ export default async function TodayPage() {
         <Section title="Ulang tahun hari ini" count={data.birthdays.length} icon={Cake}>
           {data.birthdays.map((c) => (
             <PersonCard key={c.id} id={c.id} name={c.name} meta={`🎂 Lahir ${formatDate(c.birthday)}`}>
-              <WhatsAppButton customer={c} templates={templates} size="sm" label="Kirim ucapan" preferCategory="Ulang tahun" className="w-full" />
+              <WhatsAppButton customer={{ id: c.id, name: c.name, phone: c.phone }} templates={templates} size="sm" label="Kirim ucapan" preferCategory="Ulang tahun" className="w-full" />
             </PersonCard>
           ))}
         </Section>
@@ -112,7 +112,7 @@ export default async function TodayPage() {
               name={c.name}
               meta={`Terakhir beli ${c.lastOrderAt ? relativeDays(c.lastOrderAt, now) : "-"} · total ${formatRupiah(num(c.totalSpent))}`}
             >
-              <WhatsAppButton customer={c} templates={templates} size="sm" label="Sapa lagi" preferCategory="Pengingat" variant="secondary" className="w-full" />
+              <WhatsAppButton customer={{ id: c.id, name: c.name, phone: c.phone }} templates={templates} size="sm" label="Sapa lagi" preferCategory="Pengingat" variant="secondary" className="w-full" />
             </PersonCard>
           ))}
         </Section>

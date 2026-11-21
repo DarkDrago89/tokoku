@@ -9,5 +9,7 @@ services:
       - "5433:5432"
     volumes:
       - tokoku-data:/var/lib/postgresql/data
+      # Membuat database tokoku_test untuk pengujian (hanya saat volume pertama kali dibuat)
+      - ./prisma/docker-init.sql:/docker-entrypoint-initdb.d/init.sql:ro
 volumes:
   tokoku-data:

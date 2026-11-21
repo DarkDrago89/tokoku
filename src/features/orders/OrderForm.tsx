@@ -99,7 +99,7 @@ export function OrderForm({ products, initialCustomer }: { products: ProductOpti
                 aria-label={`Produk baris ${idx + 1}`}
                 value={l.productId ?? ""}
                 onChange={(e) => pickProduct(l.key, e.target.value)}
-                className="h-11 w-full rounded-xl border border-zinc-300 bg-white px-3 text-[15px]"
+                className="h-11 w-full rounded-xl border border-zinc-300 bg-white px-3 text-[15px] focus:border-zinc-900 focus:outline-none"
               >
                 <option value="">Ketik manual…</option>
                 {products.map((p) => (
