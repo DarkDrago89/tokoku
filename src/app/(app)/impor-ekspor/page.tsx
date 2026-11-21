@@ -30,11 +30,9 @@ export default async function ImportExportPage() {
       <section>
         <SectionTitle>Ekspor</SectionTitle>
         <Card className="grid gap-2 p-4 sm:grid-cols-2">
-          { }
           <a download href="/api/ekspor/pelanggan" className={buttonClass("secondary", "md")}>
             <Download className="h-4 w-4" /> Semua pelanggan (.csv)
           </a>
-          { }
           <a download href="/api/ekspor/pesanan" className={buttonClass("secondary", "md")}>
             <Download className="h-4 w-4" /> Semua pesanan (.csv)
           </a>

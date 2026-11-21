@@ -89,7 +89,6 @@ export function ImportWizard() {
           </label>
           <p className="mt-3 text-center text-sm text-zinc-500">
             Belum punya format?{" "}
-            { }
             <a download href="/api/ekspor/contoh" className="font-medium text-zinc-900 underline underline-offset-2">
               Unduh contoh CSV
             </a>
